@@ -1,0 +1,9 @@
+node_modules
+.git
+.github
+.devcontainer
+.vscode
+.history
+.pnpm-store
+.svelte-kit
+*.log

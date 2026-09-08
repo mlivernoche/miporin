@@ -23,6 +23,11 @@ export default defineConfig({
         cwd: "./apps/main",
         cache: false,
       },
+      build: {
+        command: "vp build",
+        cwd: "./apps/main",
+        cache: false,
+      },
     },
   },
 });
