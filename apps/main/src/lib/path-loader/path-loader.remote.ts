@@ -11,8 +11,13 @@ export type Path = {
   thumbnail: string | null | undefined;
 };
 
+const collator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: "base",
+});
+
 async function ReadDirectory(location: string): Promise<Path[]> {
-  const children = await fs.readdir(location);
+  const children = (await fs.readdir(location)).toSorted((x, y) => collator.compare(x, y));
   const tree = await Promise.all(
     children.map((child) => BuildFileTree(path.join(location, child))),
   );
@@ -81,7 +86,7 @@ export type Navigation = {
   right?: Path;
 };
 
-export const getNeighboringImages = query(location, async (params): Promise<Navigation> => {
+export const getNavigation = query(location, async (params): Promise<Navigation> => {
   const location = params?.location;
 
   if (!location) {

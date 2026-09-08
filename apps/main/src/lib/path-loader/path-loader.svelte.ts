@@ -1,5 +1,5 @@
 import { createContext } from "svelte";
-import { getNeighboringImages, getPath } from "./path-loader.remote";
+import { getNavigation, getPath } from "./path-loader.remote";
 import { resource } from "runed";
 
 export class PathLoader {
@@ -12,7 +12,7 @@ export class PathLoader {
   );
   neighbors = resource(
     () => this.location,
-    async (location) => getNeighboringImages({ location }),
+    async (location) => getNavigation({ location }),
   );
 
   constructor(getUrl: () => URL) {
