@@ -2,7 +2,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   staged: {
-    "*": "vp check --fix",
+    "*": "vp run check",
   },
   fmt: {},
   lint: {
@@ -12,5 +12,17 @@ export default defineConfig({
   },
   run: {
     cache: true,
+    tasks: {
+      dev: {
+        command: "vp dev --host",
+        cwd: "./apps/main",
+        cache: false,
+      },
+      check: {
+        command: "vp run check",
+        cwd: "./apps/main",
+        cache: false,
+      },
+    },
   },
 });

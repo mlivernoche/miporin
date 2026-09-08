@@ -3,7 +3,9 @@
   "features": {
     "ghcr.io/helpers4/devcontainer/vite-plus:1": {}
   },
-  "forwardPorts": [5173],
+  "forwardPorts": [
+    5173
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -31,6 +33,9 @@
         },
         "[typescriptreact]": {
           "editor.defaultFormatter": "oxc.oxc-vscode"
+        },
+        "[svelte]": {
+          "editor.defaultFormatter": "svelte.svelte-vscode"
         },
         "oxc.fmt.configPath": "./vite.config.ts",
         "editor.formatOnSave": true,
