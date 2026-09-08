@@ -6,4 +6,6 @@ node_modules
 .history
 .pnpm-store
 .svelte-kit
+apps/main/build
+apps/main/imgs
 *.log
