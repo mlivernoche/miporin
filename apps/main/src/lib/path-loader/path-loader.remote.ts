@@ -7,8 +7,15 @@ import { isImage } from "$lib/image-loader";
 export type Path = {
   location: string;
   parent: string;
-  children: Path[];
-  thumbnail: string | null | undefined;
+  content:
+    | {
+        type: "directory";
+        thumbnail: string | null | undefined;
+        children: Path[];
+      }
+    | {
+        type: "image";
+      };
 };
 
 const collator = new Intl.Collator(undefined, {
@@ -30,13 +37,16 @@ async function BuildFileTree(location: string): Promise<Path | null> {
 
   if (stats.isDirectory()) {
     const children = await ReadDirectory(location);
-    const thumbnail = children.find((child) => child.thumbnail !== null)?.thumbnail;
+    const thumbnail = children.filter((child) => child.content.type === "image").at(0)?.location;
 
     return {
       location,
       parent,
-      children,
-      thumbnail,
+      content: {
+        type: "directory",
+        children,
+        thumbnail,
+      },
     };
   }
 
@@ -46,8 +56,9 @@ async function BuildFileTree(location: string): Promise<Path | null> {
     return {
       location,
       parent,
-      children: [],
-      thumbnail: location,
+      content: {
+        type: "image",
+      },
     };
   }
 
@@ -66,12 +77,7 @@ export const getPath = query(location, async (params): Promise<Path | null> => {
   try {
     return BuildFileTree(location);
   } catch {
-    return {
-      location,
-      parent: location,
-      children: [],
-      thumbnail: null,
-    };
+    return null;
   }
 });
 
@@ -105,19 +111,23 @@ export const getNavigation = query(location, async (params): Promise<Navigation>
     return {};
   }
 
-  const first = tree.children[0];
-  const last = tree.children[tree.children.length - 1];
+  if (tree.content.type === "image") {
+    return {};
+  }
+
+  const first = tree.content.children[0];
+  const last = tree.content.children[tree.content.children.length - 1];
   let left: Path | undefined = undefined;
   let right: Path | undefined = undefined;
   let i = 0;
-  const total = tree.children.length;
+  const total = tree.content.children.length;
 
   for (; i < total; i++) {
-    const curr = tree.children[i];
+    const curr = tree.content.children[i];
 
     if (curr.location === location) {
-      left = tree.children[i - 1];
-      right = tree.children[i + 1];
+      left = tree.content.children[i - 1];
+      right = tree.content.children[i + 1];
       break;
     }
   }
