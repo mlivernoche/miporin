@@ -119,22 +119,34 @@ export const getNavigation = query(location, async (params): Promise<Navigation>
   const last = tree.content.children[tree.content.children.length - 1];
   let left: Path | undefined = undefined;
   let right: Path | undefined = undefined;
-  let i = 0;
-  const total = tree.content.children.length;
+  let spot = 1;
+  const total = tree.content.children.filter((child) => child.content.type === "image").length;
+  let locationFound = false;
 
-  for (; i < total; i++) {
+  for (let i = 0; i < tree.content.children.length; i++) {
     const curr = tree.content.children[i];
 
     if (curr.location === location) {
-      left = tree.content.children[i - 1];
-      right = tree.content.children[i + 1];
+      locationFound = true;
+    } else if (curr.content.type == "image") {
+      if (!locationFound) {
+        spot++;
+        left = curr;
+      }
+
+      if (locationFound && !right) {
+        right = curr;
+      }
+    }
+
+    if (left && right) {
       break;
     }
   }
 
   return {
     position: {
-      spot: i + 1,
+      spot,
       total,
     },
     first,
