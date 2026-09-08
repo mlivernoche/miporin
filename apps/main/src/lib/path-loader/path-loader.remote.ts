@@ -100,20 +100,12 @@ async function BuildFileTree(location: string, depth = 0): Promise<Path | null> 
   return null;
 }
 
-async function getDefaultLocation(): Promise<string> {
+export const getDefaultLocation = query(() => {
   if (process.env.MEDIA_DIR) return process.env.MEDIA_DIR;
   if (process.env.DATA_DIR) return process.env.DATA_DIR;
   if (process.env.DEFAULT_LOCATION) return process.env.DEFAULT_LOCATION;
-
-  try {
-    const stat = await fs.stat("/share");
-    if (stat.isDirectory()) return "/share";
-  } catch {
-    // /share is not mounted
-  }
-
   return process.cwd();
-}
+});
 
 const location = v.optional(
   v.object({

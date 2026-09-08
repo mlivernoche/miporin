@@ -1,5 +1,5 @@
 import { createContext } from "svelte";
-import { getNavigation, getPath } from "./path-loader.remote";
+import { getDefaultLocation, getNavigation, getPath } from "./path-loader.remote";
 import { resource } from "runed";
 
 export class PathLoader {
@@ -14,6 +14,9 @@ export class PathLoader {
     () => this.location,
     async (location) => getNavigation({ location }),
   );
+  get home() {
+    return getDefaultLocation();
+  }
 
   constructor(getUrl: () => URL) {
     this.#getUrl = getUrl;
