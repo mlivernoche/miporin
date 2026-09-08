@@ -70,7 +70,7 @@
         <div class="flex flex-1 min-h-0 w-full justify-center">
             {#if pathLoader.neighbors.current?.left}
                 <img
-                    class="min-w-0 h-full object-contain"
+                    class="min-w-0 h-full object-contain hidden lg:inline"
                     src="/images?location={pathLoader.neighbors.current.left
                         .location}"
                     alt={pathLoader.neighbors.current.left.location}
@@ -83,7 +83,7 @@
             />
             {#if pathLoader.neighbors.current?.right}
                 <img
-                    class="min-w-0 h-full object-contain"
+                    class="min-w-0 h-full object-contain hidden 2xl:inline"
                     src="/images?location={pathLoader.neighbors.current.right
                         .location}"
                     alt={pathLoader.neighbors.current.right.location}
