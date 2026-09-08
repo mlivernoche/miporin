@@ -11,8 +11,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/main/package.json ./apps/main/
 COPY packages/utils/package.json ./packages/utils/
 
-# Install all dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies without running lifecycle scripts (skips dev prepare/git hooks in Docker)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy project source code
 COPY . .
