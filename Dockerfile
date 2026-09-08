@@ -3,6 +3,9 @@ FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
 
+# Install git required by vp config and development tooling
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+
 # Enable Corepack and prepare the required pnpm version
 RUN corepack enable && corepack prepare pnpm@11.25.0 --activate
 
@@ -11,8 +14,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/main/package.json ./apps/main/
 COPY packages/utils/package.json ./packages/utils/
 
-# Install dependencies without running lifecycle scripts (skips dev prepare/git hooks in Docker)
-RUN pnpm install --frozen-lockfile --ignore-scripts
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
 # Copy project source code
 COPY . .
