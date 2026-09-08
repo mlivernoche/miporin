@@ -1,25 +1,44 @@
 {
   "name": "main",
-  "version": "0.0.1",
   "private": true,
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vp dev --host",
-    "build": "vite build",
+    "build": "vp build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
+    "@fontsource-variable/inter": "catalog:",
+    "@internationalized/date": "catalog:",
     "@sveltejs/adapter-node": "^5.5.4",
     "@sveltejs/kit": "^2.63.0",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tailwindcss/vite": "^4.3.0",
+    "bits-ui": "catalog:",
+    "clsx": "catalog:",
+    "embla-carousel-svelte": "catalog:",
+    "formsnap": "catalog:",
+    "mode-watcher": "catalog:",
+    "paneforge": "catalog:",
+    "phosphor-svelte": "^3.1.0",
+    "shadcn-svelte": "catalog:",
     "svelte": "^5.56.1",
     "svelte-check": "^4.6.0",
+    "svelte-sonner": "catalog:",
+    "sveltekit-superforms": "catalog:",
+    "tailwind-merge": "catalog:",
+    "tailwind-variants": "^3.3.1",
     "tailwindcss": "^4.3.0",
+    "tw-animate-css": "catalog:",
     "typescript": "^6.0.3",
+    "vaul-svelte": "catalog:",
     "vite": "^8.0.16"
+  },
+  "dependencies": {
+    "valibot": "catalog:"
   }
 }
