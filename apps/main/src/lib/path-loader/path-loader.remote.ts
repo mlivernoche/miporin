@@ -23,21 +23,56 @@ const collator = new Intl.Collator(undefined, {
   sensitivity: "base",
 });
 
-async function ReadDirectory(location: string): Promise<Path[]> {
-  const children = (await fs.readdir(location)).toSorted((x, y) => collator.compare(x, y));
-  const tree = await Promise.all(
-    children.map((child) => BuildFileTree(path.join(location, child))),
-  );
-  return tree.filter((tree) => !!tree);
+async function findThumbnail(dirLocation: string): Promise<string | undefined> {
+  try {
+    const files = await fs.readdir(dirLocation);
+    for (const file of files) {
+      const fullPath = path.join(dirLocation, file);
+      const img = await isImage(fullPath);
+      if (img) return img.location;
+    }
+  } catch {
+    // Directory unreadable or no permission
+  }
+  return undefined;
 }
 
-async function BuildFileTree(location: string): Promise<Path | null> {
+async function ReadDirectory(location: string, depth = 0): Promise<Path[]> {
+  let files: string[];
+  try {
+    files = await fs.readdir(location);
+  } catch (err) {
+    console.warn(`Cannot read directory "${location}":`, err);
+    return [];
+  }
+
+  const children = files.toSorted((x, y) => collator.compare(x, y));
+  const tree = await Promise.all(
+    children.map(async (child) => {
+      try {
+        return await BuildFileTree(path.join(location, child), depth + 1);
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return tree.filter((tree): tree is Path => !!tree);
+}
+
+async function BuildFileTree(location: string, depth = 0): Promise<Path | null> {
   const stats = await fs.stat(location);
   const parent = path.dirname(location);
 
   if (stats.isDirectory()) {
-    const children = await ReadDirectory(location);
-    const thumbnail = children.filter((child) => child.content.type === "image").at(0)?.location;
+    let children: Path[] = [];
+    let thumbnail: string | null | undefined = undefined;
+
+    if (depth === 0) {
+      children = await ReadDirectory(location, depth);
+      thumbnail = children.find((child) => child.content.type === "image")?.location;
+    } else {
+      thumbnail = await findThumbnail(location);
+    }
 
     return {
       location,
@@ -65,6 +100,21 @@ async function BuildFileTree(location: string): Promise<Path | null> {
   return null;
 }
 
+async function getDefaultLocation(): Promise<string> {
+  if (process.env.MEDIA_DIR) return process.env.MEDIA_DIR;
+  if (process.env.DATA_DIR) return process.env.DATA_DIR;
+  if (process.env.DEFAULT_LOCATION) return process.env.DEFAULT_LOCATION;
+
+  try {
+    const stat = await fs.stat("/share");
+    if (stat.isDirectory()) return "/share";
+  } catch {
+    // /share is not mounted
+  }
+
+  return process.cwd();
+}
+
 const location = v.optional(
   v.object({
     location: v.nullable(v.string()),
@@ -72,11 +122,13 @@ const location = v.optional(
 );
 
 export const getPath = query(location, async (params): Promise<Path | null> => {
-  const location = params?.location ?? process.cwd();
+  const defaultLocation = await getDefaultLocation();
+  const location = params?.location || defaultLocation;
 
   try {
-    return BuildFileTree(location);
-  } catch {
+    return await BuildFileTree(location, 0);
+  } catch (err) {
+    console.error(`Error loading path "${location}":`, err);
     return null;
   }
 });
