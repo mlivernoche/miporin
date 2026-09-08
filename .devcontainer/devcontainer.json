@@ -1,7 +1,8 @@
 {
   "image": "mcr.microsoft.com/devcontainers/typescript-node",
   "features": {
-    "ghcr.io/helpers4/devcontainer/vite-plus:1": {}
+    "ghcr.io/helpers4/devcontainer/vite-plus:1.2.0": {},
+    "ghcr.io/aqua/devcontainer-antigravity-cli/antigravity-cli:1": {}
   },
   "forwardPorts": [
     5173

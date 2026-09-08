@@ -1,10 +1,17 @@
 {
   "features": {
+    "ghcr.io/aqua/devcontainer-antigravity-cli/antigravity-cli:1": {
+      "version": "1.0.2",
+      "resolved": "ghcr.io/aqua/devcontainer-antigravity-cli/antigravity-cli@sha256:d7ae5139e62443070175cae13c275ae08efa8d89d6d5d432f96f3f9df51c2030",
+      "integrity": "sha256:d7ae5139e62443070175cae13c275ae08efa8d89d6d5d432f96f3f9df51c2030"
+    },
     "ghcr.io/helpers4/devcontainer/essential-dev:1": {
       "version": "1.0.9",
       "resolved": "ghcr.io/helpers4/devcontainer/essential-dev@sha256:fa2dbd2d0ee918528d861daf15e8fc2a1271a0eb50287496f28d033ef9c22ecb",
       "integrity": "sha256:fa2dbd2d0ee918528d861daf15e8fc2a1271a0eb50287496f28d033ef9c22ecb",
-      "dependsOn": ["ghcr.io/helpers4/devcontainer/helpers4-common:1"]
+      "dependsOn": [
+        "ghcr.io/helpers4/devcontainer/helpers4-common:1"
+      ]
     },
     "ghcr.io/helpers4/devcontainer/helpers4-common:1": {
       "version": "1.0.1",
@@ -15,12 +22,14 @@
       "version": "1.0.7",
       "resolved": "ghcr.io/helpers4/devcontainer/typescript-dev@sha256:76abf803b00fcfaa628588e0f6e0c532c590fabdd88748a65557a83d66de3f6d",
       "integrity": "sha256:76abf803b00fcfaa628588e0f6e0c532c590fabdd88748a65557a83d66de3f6d",
-      "dependsOn": ["ghcr.io/helpers4/devcontainer/essential-dev:1"]
+      "dependsOn": [
+        "ghcr.io/helpers4/devcontainer/essential-dev:1"
+      ]
     },
-    "ghcr.io/helpers4/devcontainer/vite-plus:1": {
-      "version": "1.1.0",
-      "resolved": "ghcr.io/helpers4/devcontainer/vite-plus@sha256:d79d86296425ac4ca7b65705652f8099919c5197da877883a41f61cab02a364f",
-      "integrity": "sha256:d79d86296425ac4ca7b65705652f8099919c5197da877883a41f61cab02a364f",
+    "ghcr.io/helpers4/devcontainer/vite-plus:1.2.0": {
+      "version": "1.2.0",
+      "resolved": "ghcr.io/helpers4/devcontainer/vite-plus@sha256:628ec7be749f20f94000d6878f9163e217f8c9c2e64c79e1bedbae2b464305d8",
+      "integrity": "sha256:628ec7be749f20f94000d6878f9163e217f8c9c2e64c79e1bedbae2b464305d8",
       "dependsOn": [
         "ghcr.io/helpers4/devcontainer/typescript-dev:1",
         "ghcr.io/helpers4/devcontainer/helpers4-common:1"
