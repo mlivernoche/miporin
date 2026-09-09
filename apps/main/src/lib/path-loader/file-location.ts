@@ -59,6 +59,7 @@ class DirectoryLocation implements IFileLocation {
     const thumbnail = children.find((child) => child.type === "image");
 
     const res: Path = {
+      key: this.location,
       location: this.location,
       parent: this.parent,
       type: "directory",
@@ -88,14 +89,15 @@ class FileLocation implements IFileLocation {
   }
 
   getPath() {
-    const path: Path = {
+    const res: Path = {
+      key: path.join(this.location, this.name),
       location: this.location,
       parent: this.location,
       type: "image",
       name: this.name,
     };
 
-    return Promise.resolve(path);
+    return Promise.resolve(res);
   }
 }
 

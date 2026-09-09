@@ -1,4 +1,5 @@
 export type Path = {
+  key: string;
   location: string;
   parent: string;
 } & (
