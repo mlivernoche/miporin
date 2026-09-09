@@ -16,12 +16,14 @@
             >
                 {#if child.content.type === "image"}
                     <img
+                        loading="lazy"
                         src="/images?location={child.location}"
                         alt={child.location}
                     />
                 {:else if child.content.type === "directory"}
                     {#if child.content.thumbnail}
                         <img
+                            loading="lazy"
                             src="/images?location={child.content.thumbnail}"
                             alt={child.content.thumbnail}
                         />
