@@ -1,104 +1,14 @@
 import * as v from "valibot";
 import { query } from "$app/server";
-import fs from "node:fs/promises";
-import path from "node:path";
-import { isImage } from "$lib/image-loader";
+import type { Path } from "./types";
+import { getFileLocation } from "./file-location";
 
-export type Path = {
-  location: string;
-  parent: string;
-  content:
-    | {
-        type: "directory";
-        thumbnail: string | null | undefined;
-        children: Path[];
-      }
-    | {
-        type: "image";
-      };
-};
-
-const collator = new Intl.Collator(undefined, {
-  numeric: true,
-  sensitivity: "base",
-});
-
-async function findThumbnail(dirLocation: string): Promise<string | undefined> {
-  try {
-    const files = await fs.readdir(dirLocation);
-    for (const file of files) {
-      const fullPath = path.join(dirLocation, file);
-      const img = await isImage(fullPath);
-      if (img) return img.location;
-    }
-  } catch {
-    // Directory unreadable or no permission
-  }
-  return undefined;
-}
-
-async function ReadDirectory(location: string, depth = 0): Promise<Path[]> {
-  let files: string[];
-  try {
-    files = await fs.readdir(location);
-  } catch (err) {
-    console.warn(`Cannot read directory "${location}":`, err);
-    return [];
-  }
-
-  const children = files.toSorted((x, y) => collator.compare(x, y));
-  const tree = await Promise.all(
-    children.map(async (child) => {
-      try {
-        return await BuildFileTree(path.join(location, child), depth + 1);
-      } catch {
-        return null;
-      }
-    }),
-  );
-  return tree.filter((tree): tree is Path => !!tree);
-}
-
-async function BuildFileTree(location: string, depth = 0): Promise<Path | null> {
-  const stats = await fs.stat(location);
-  const parent = path.dirname(location);
-
-  if (stats.isDirectory()) {
-    let children: Path[] = [];
-    let thumbnail: string | null | undefined = undefined;
-
-    if (depth === 0) {
-      children = await ReadDirectory(location, depth);
-      thumbnail = children.find((child) => child.content.type === "image")?.location;
-    } else {
-      thumbnail = await findThumbnail(location);
-    }
-
-    return {
-      location,
-      parent,
-      content: {
-        type: "directory",
-        children,
-        thumbnail,
-      },
-    };
-  }
-
-  const file = await isImage(location);
-
-  if (file) {
-    return {
-      location,
-      parent,
-      content: {
-        type: "image",
-      },
-    };
-  }
-
-  return null;
-}
+const location = v.optional(
+  v.object({
+    location: v.string(),
+    name: v.nullable(v.string()),
+  }),
+);
 
 export const getDefaultLocation = query(() => {
   if (process.env.MEDIA_DIR) return process.env.MEDIA_DIR;
@@ -107,20 +17,19 @@ export const getDefaultLocation = query(() => {
   return process.cwd();
 });
 
-const location = v.optional(
-  v.object({
-    location: v.nullable(v.string()),
-  }),
-);
-
 export const getPath = query(location, async (params): Promise<Path | null> => {
   const defaultLocation = await getDefaultLocation();
-  const location = params?.location || defaultLocation;
 
   try {
-    return await BuildFileTree(location, 0);
+    const location = await getFileLocation(params?.location || defaultLocation, params?.name);
+
+    if (!location) {
+      return null;
+    }
+
+    return await location.getPath();
   } catch (err) {
-    console.error(`Error loading path "${location}":`, err);
+    console.error(`Error loading path "${params?.location} with ${params?.name}":`, err);
     return null;
   }
 });
@@ -137,42 +46,39 @@ export type Navigation = {
 };
 
 export const getNavigation = query(location, async (params): Promise<Navigation> => {
-  const location = params?.location;
-
-  if (!location) {
+  if (!params?.location || !params?.name) {
     return {};
   }
 
-  const stats = await fs.stat(location);
+  const location = await getFileLocation(params.location);
 
-  if (!stats.isFile()) {
-    return {};
-  }
+  const tree = await location?.getPath();
 
-  const tree = await BuildFileTree(path.dirname(location));
+  console.log(tree);
 
   if (!tree) {
     return {};
   }
 
-  if (tree.content.type === "image") {
+  if (tree.type !== "directory") {
     return {};
   }
 
-  const first = tree.content.children[0];
-  const last = tree.content.children[tree.content.children.length - 1];
+  const images = tree.children.filter((child) => child.type === "image");
+  const first = images[0];
+  const last = images[images.length - 1];
   let left: Path | undefined = undefined;
   let right: Path | undefined = undefined;
   let spot = 1;
-  const total = tree.content.children.filter((child) => child.content.type === "image").length;
+  const total = images.length;
   let locationFound = false;
 
-  for (let i = 0; i < tree.content.children.length; i++) {
-    const curr = tree.content.children[i];
+  for (let i = 0; i < images.length; i++) {
+    const curr = images[i];
 
-    if (curr.location === location) {
+    if (curr.name === params.name) {
       locationFound = true;
-    } else if (curr.content.type == "image") {
+    } else if (curr.type == "image") {
       if (!locationFound) {
         spot++;
         left = curr;

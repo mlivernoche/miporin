@@ -6,9 +6,9 @@
     const pathLoader = getPathLoader();
 </script>
 
-{#if pathLoader.paths.current?.content.type === "directory"}
+{#if pathLoader.paths.current?.type === "directory"}
     <DirectoryGallery />
-{:else if pathLoader.paths.current?.content.type === "image"}
+{:else if pathLoader.paths.current?.type === "image"}
     <DisplayImage />
 {:else if pathLoader.paths.error}
     <p>{pathLoader.paths.error.message}</p>

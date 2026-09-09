@@ -6,14 +6,24 @@ export class PathLoader {
   #getUrl: () => URL;
 
   location = $derived.by(() => this.#getUrl().searchParams.get("location"));
-  paths = resource(
-    () => this.location,
-    async (location) => getPath({ location }),
-  );
-  neighbors = resource(
-    () => this.location,
-    async (location) => getNavigation({ location }),
-  );
+  name = $derived.by(() => this.#getUrl().searchParams.get("name"));
+  paths = resource([() => this.location, () => this.name], async (params) => {
+    const [location, name] = params;
+    console.log(params);
+
+    if (location) {
+      const result = await getPath({ location, name });
+      console.log(result);
+      return result;
+    }
+  });
+  neighbors = resource([() => this.location, () => this.name], async (params) => {
+    const [location, name] = params;
+
+    if (location) {
+      return await getNavigation({ location, name });
+    }
+  });
   get home() {
     return getDefaultLocation();
   }

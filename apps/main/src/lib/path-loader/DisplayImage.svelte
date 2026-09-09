@@ -6,6 +6,8 @@
     import CaretDoubleRightIcon from "phosphor-svelte/lib/CaretDoubleRightIcon";
     import CaretLeftIcon from "phosphor-svelte/lib/CaretLeftIcon";
     import CaretRightIcon from "phosphor-svelte/lib/CaretRightIcon";
+    import ImageComponent from "./ImageComponent.svelte";
+    import { getPathLink } from "./types";
 
     const pathLoader = getPathLoader();
 </script>
@@ -14,9 +16,7 @@
     {#if pathLoader.neighbors.current}
         <ButtonGroup class="mx-auto">
             {#if pathLoader.neighbors.current.first?.location}
-                <Button
-                    href={`/?location=${pathLoader.neighbors.current.first?.location}`}
-                >
+                <Button href={getPathLink(pathLoader.neighbors.current.first)}>
                     <CaretDoubleLeftIcon />
                 </Button>
             {:else}
@@ -25,9 +25,7 @@
                 </Button>
             {/if}
             {#if pathLoader.neighbors.current.left?.location}
-                <Button
-                    href={`/?location=${pathLoader.neighbors.current.left?.location}`}
-                >
+                <Button href={getPathLink(pathLoader.neighbors.current.left)}>
                     <CaretLeftIcon />
                 </Button>
             {:else}
@@ -42,9 +40,7 @@
                 </Button>
             {/if}
             {#if pathLoader.neighbors.current.right?.location}
-                <Button
-                    href={`/?location=${pathLoader.neighbors.current.right?.location}`}
-                >
+                <Button href={getPathLink(pathLoader.neighbors.current.right)}>
                     <CaretRightIcon />
                 </Button>
             {:else}
@@ -53,9 +49,7 @@
                 </Button>
             {/if}
             {#if pathLoader.neighbors.current.last?.location}
-                <Button
-                    href={`/?location=${pathLoader.neighbors.current.last?.location}`}
-                >
+                <Button href={getPathLink(pathLoader.neighbors.current.last)}>
                     <CaretDoubleRightIcon />
                 </Button>
             {:else}
@@ -66,28 +60,14 @@
         </ButtonGroup>
     {/if}
 
-    {#if pathLoader.paths.current}
+    {#if pathLoader.paths.current?.type === "image"}
         <div class="flex flex-1 min-h-0 w-full justify-center">
-            {#if pathLoader.neighbors.current?.left}
-                <img
-                    class="min-w-0 h-full object-contain hidden lg:inline"
-                    src="/images?location={pathLoader.neighbors.current.left
-                        .location}"
-                    alt={pathLoader.neighbors.current.left.location}
-                />
+            {#if pathLoader.neighbors.current?.left?.type === "image"}
+                <ImageComponent path={pathLoader.neighbors.current.left} />
             {/if}
-            <img
-                class="min-w-0 h-full object-contain"
-                src="/images?location={pathLoader.paths.current.location}"
-                alt={pathLoader.paths.current.location}
-            />
-            {#if pathLoader.neighbors.current?.right}
-                <img
-                    class="min-w-0 h-full object-contain hidden 2xl:inline"
-                    src="/images?location={pathLoader.neighbors.current.right
-                        .location}"
-                    alt={pathLoader.neighbors.current.right.location}
-                />
+            <ImageComponent path={pathLoader.paths.current} />
+            {#if pathLoader.neighbors.current?.right?.type === "image"}
+                <ImageComponent path={pathLoader.neighbors.current.right} />
             {/if}
         </div>
     {/if}
