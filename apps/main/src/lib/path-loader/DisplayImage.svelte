@@ -62,12 +62,12 @@
 
     {#if pathLoader.paths.current?.type === "image"}
         <div class="flex flex-1 min-h-0 w-full justify-center">
-            {#if pathLoader.neighbors.current?.left?.type === "image"}
-                <ImageComponent path={pathLoader.neighbors.current.left} />
-            {/if}
-            <ImageComponent path={pathLoader.paths.current} />
             {#if pathLoader.neighbors.current?.right?.type === "image"}
                 <ImageComponent path={pathLoader.neighbors.current.right} />
+            {/if}
+            <ImageComponent path={pathLoader.paths.current} />
+            {#if pathLoader.neighbors.current?.left?.type === "image"}
+                <ImageComponent path={pathLoader.neighbors.current.left} />
             {/if}
         </div>
     {/if}
