@@ -63,11 +63,20 @@
     {#if pathLoader.paths.current?.type === "image"}
         <div class="flex flex-1 min-h-0 w-full justify-center">
             {#if pathLoader.neighbors.current?.right?.type === "image"}
-                <ImageComponent path={pathLoader.neighbors.current.right} />
+                <ImageComponent
+                    path={pathLoader.neighbors.current.right}
+                    class="min-w-0 h-full object-contain hidden 2xl:inline"
+                />
             {/if}
-            <ImageComponent path={pathLoader.paths.current} />
+            <ImageComponent
+                path={pathLoader.paths.current}
+                class="min-w-0 h-full object-contain"
+            />
             {#if pathLoader.neighbors.current?.left?.type === "image"}
-                <ImageComponent path={pathLoader.neighbors.current.left} />
+                <ImageComponent
+                    path={pathLoader.neighbors.current.left}
+                    class="min-w-0 h-full object-contain hidden lg:inline"
+                />
             {/if}
         </div>
     {/if}
